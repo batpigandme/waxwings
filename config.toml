@@ -18,7 +18,7 @@ paginate = 10
 footnotereturnlinkcontents = "↩"
 footnoteanchorprefix = "°"
 
-theme = "hugo-icarus-theme"
+theme = "hugo-casper-two"
 # Comment the themesDir option if you use this theme in production
 # themesDir = "../.."
 
