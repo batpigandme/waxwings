@@ -1,0 +1,27 @@
+---
+title: '`r emo::ji("palette")` rPlotter - Archer poster edition'
+author: Mara Averick
+draft: TRUE
+date: '2018-07-10'
+slug: rplotter-archer-poster-edition
+categories: []
+tags:
+  - R
+banner: ''
+description: 'Using the rPlotter package to extract colour palettes from Archer promo posters. `r emo::ji("artist")`'
+images: []
+---
+
+Jo-fai Chow's [rPlotter](https://github.com/woobe/rPlotter) is described as
+"[w]rapper functions that make plotting in R a lot easier for beginners." I came upon it in its best and highest form, though, as "another" colour-palette generator for R.[^1] To be specific, I was drawn in by **_Palette Tarantino_**, which you can catch the code for in Chow's post, [Towards (Yet) Another R Colour Palette Generator](https://blenditbayes.blogspot.com/2014/05/towards-yet-another-r-colour-palette.html).
+
+![rPlotter-generated colour palettes for: Reservoir Dogs, Pulp Fiction, Kill Bill, and Django Unchained](https://i.imgur.com/7qGwONo.png)
+
+Being, well, me—my first thought was `r emo::ji("thinking")` _How could I involve Archer in this?_ So, let's Archify things... (Yes, his name's a verb, you'll just have to accept that fact!)
+
+![I'm a verb now, Lana. Deal with it!](https://i.imgur.com/NaAfhPY.gif)
+
+
+
+
+[^1]: Author's words, not mine—I would never disparrage the importance of colour-palette generators.
