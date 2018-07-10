@@ -1,0 +1,91 @@
+---
+draft: yes
+title: '👨‍🎨 Palettes - Archer poster edition'
+author: Mara Averick
+draft: TRUE
+date: '2018-07-12'
+slug: palettes-archer-poster-edition
+categories: []
+tags:
+  - R
+banner: ''
+description: 'Extracting colour palettes from Archer promo posters. 👩‍🎨'
+images: []
+---
+
+
+
+<p><a href="http://www.jofaichow.co.uk/">Jo-fai Chow</a>’s <a href="https://github.com/woobe/rPlotter">rPlotter</a> is described as
+“[w]rapper functions that make plotting in R a lot easier for beginners.” I came upon it in its best and highest form, though, as “another” colour-palette generator for R.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> To be specific, I was drawn in by <strong><em>Palette Tarantino</em></strong>, which you can catch the code for in Chow’s post, <a href="https://blenditbayes.blogspot.com/2014/05/towards-yet-another-r-colour-palette.html">Towards (Yet) Another R Colour Palette Generator</a>.</p>
+<div class="figure">
+<img src="https://i.imgur.com/7qGwONo.png" alt="rPlotter-generated colour palettes for: Reservoir Dogs, Pulp Fiction, Kill Bill, and Django Unchained" />
+<p class="caption">rPlotter-generated colour palettes for: Reservoir Dogs, Pulp Fiction, Kill Bill, and Django Unchained</p>
+</div>
+<p>Being, well, me—my first thought was 🤔 <em>How could I involve Archer in this?</em> So, let’s Archify things… (Yes, his name’s a verb, you’ll just have to accept that fact!)</p>
+<div class="figure">
+<img src="https://i.imgur.com/NaAfhPY.gif" alt="I’m a verb now, Lana. Deal with it!" />
+<p class="caption">I’m a verb now, Lana. Deal with it!</p>
+</div>
+<pre class="r"><code># devtools::install_github(&quot;woobe/rPlotter&quot;)
+library(rPlotter)</code></pre>
+<div id="rplotterextract_colours" class="section level3">
+<h3><code>rPlotter::extract_colours()</code></h3>
+<p>I’ll follow the <a href="https://github.com/woobe/rPlotter#example-extract_colours">example</a> from the <a href="https://github.com/woobe/rPlotter">rPlotter README</a> for extracting colours. I retrieved the <a href="https://imgur.com/a/jPE0y95">Archer posters</a> for each season from the <a href="http://archer.wikia.com/wiki/Category:Seasons">Archer wiki</a> (<em>duh</em>), which I’ll use as my source images.</p>
+<p>Before we get into the season-by-season posters, let’s take a peek at what I consider to be the “generic” Archer poster of sorts.</p>
+<div class="figure">
+<img src="https://i.imgur.com/FyEALqr.jpg" alt="Archer poster" />
+<p class="caption">Archer poster</p>
+</div>
+<pre class="r"><code>pal_a &lt;- extract_colours(&quot;https://i.imgur.com/FyEALqr.jpg&quot;, num_col = 8)
+par(mfrow = c(1,2))
+pie(rep(1, 8), col = pal_a, main = &quot;Palette based on Archer Poster&quot;)
+hist(Nile, breaks = 8, col = pal_a, main = &quot;Palette based on Archer Poster&quot;)</code></pre>
+<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/season-1-1.png" width="672" /></p>
+<p>I’m not loving this palette. I mean, I understand why it’s happening—the suit, the background, the fire, but let’s take another palette generator for a spin.</p>
+</div>
+<div id="quickpaletteurl_palette" class="section level3">
+<h3><code>quickpalette::url_palette()</code></h3>
+<p>Emil Hvitfeldt’s <a href="https://github.com/EmilHvitfeldt/quickpalette">quickpalette</a> package “provide[s] a few tools to quickly acquire new color palettes to be used in R.” We’ll pair it with the <a href="https://github.com/kwstat/pals">pals</a> package for easy layout generation.</p>
+<pre class="r"><code># devtools::install_github(&quot;EmilHvitfeldt/quickpalette&quot;)
+library(quickpalette)
+library(pals)</code></pre>
+<p>We’ll use the same image, so we can get a “fair” comparison between the packages.</p>
+<pre class="r"><code>url &lt;- &quot;https://i.imgur.com/FyEALqr.jpg&quot;
+quickpalette::url_palette(url = url, n_clusters = 8) %&gt;%
+  pals::pal.bands()</code></pre>
+<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/quickpal-1.png" width="672" /></p>
+<p>Definitely getting a brighter vibe with this one.</p>
+</div>
+<div id="palettercreate_palette" class="section level3">
+<h3><code>paletter::create_palette()</code></h3>
+<p>Let’s try one more, Andrea Cirillo’s <a href="https://github.com/AndreaCirilloAC/paletter">paletter</a>. Unlike the other two, paletter prefers an image path, so I’ll use a local copy of the same image. There’s a great post describing the math behind the methods in this package, which you can check out <a href="https://datascienceplus.com/how-to-use-paletter-to-automagically-build-palettes-from-pictures/">here</a>.</p>
+<pre class="r"><code># devtools::install_github(&quot;AndreaCirilloAC/paletter&quot;)
+library(paletter)</code></pre>
+<p>You have to specify a <code>type_of_variable</code> argument, so I’ll go with <code>&quot;categorical&quot;</code>.</p>
+<pre class="r"><code>image_path &lt;- here::here(&quot;static&quot;, &quot;img&quot;, &quot;ArcherPosters&quot;, &quot;archer-poster.jpg&quot;)
+colours_vector &lt;- create_palette(image_path = image_path,
+                                 number_of_colors = 8, 
+                                 type_of_variable = &quot;categorical&quot;)
+#&gt; decomposing image into RGB...
+#&gt; applying kmeans to the image...
+#&gt; optimising palette...
+#&gt; Joining, by = &quot;id&quot;
+#&gt; Joining, by = &quot;id&quot;
+#&gt; optimising level of divergence between colours</code></pre>
+<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/paletter-pal-1.png" width="672" /><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/paletter-pal-2.png" width="672" /></p>
+<p>Though I like the layout of the output, paletter takes significantly longer than the other two packages. I also don’t know why it outputs the palette twice. So…🤷</p>
+</div>
+<div id="a-palette-for-all-seasons" class="section level3">
+<h3>A palette for all seasons</h3>
+<p>Based on the code chunk above, I’m beginning to suspect that there might be a lot of copying and pasting involved, which means it’s probably time for (you guessed it) a function. To make life even easier on myself, I’m going to use local copies of the images, which I’ve conveniently suffixed with <code>_season*.jpg</code>.</p>
+<p>I can use a combination of the <a href="https://here.r-lib.org/">here</a> and <a href="https://glue.tidyverse.org/">glue</a> packages to build paths to the images.</p>
+<pre class="r"><code>num &lt;- 2
+here::here(&quot;static&quot;, &quot;img&quot;, &quot;ArcherPosters&quot;, glue::glue(&quot;ArcherPromoPoster_season{num}.jpg&quot;))
+#&gt; [1] &quot;/Users/maraaverick/waxwings/static/img/ArcherPosters/ArcherPromoPoster_season2.jpg&quot;</code></pre>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Author’s words, not mine—I would never disparrage the importance of colour-palette generators.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
