@@ -1,6 +1,6 @@
 ---
 draft: yes
-title: '👨‍🎨 Palettes - Archer poster edition'
+title: '🎨 Palettes - Archer poster edition'
 author: Mara Averick
 draft: TRUE
 date: '2018-07-12'
@@ -54,7 +54,12 @@ library(pals)</code></pre>
 quickpalette::url_palette(url = url, n_clusters = 8) %&gt;%
   pals::pal.bands()</code></pre>
 <p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/quickpal-1.png" width="672" /></p>
-<p>Definitely getting a brighter vibe with this one.</p>
+<p>Definitely getting a brighter vibe with this one. That’s a lot of whitespace. Let’s see if we can tighten things up with Jeroen Ooms’ <a href="https://cran.r-project.org/web/packages/magick/vignettes/intro.html">magick</a> package.</p>
+<p>We’ll need to read the image generated in the last chunk back in.</p>
+<pre class="r"><code>library(magick)
+image_read(&quot;https://raw.githubusercontent.com/batpigandme/waxwings/rplotter/static/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/quickpal-1.png&quot;) %&gt;%
+  image_trim()</code></pre>
+<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/quickpal-magic-1.png" width="512" /></p>
 </div>
 <div id="palettercreate_palette" class="section level3">
 <h3><code>paletter::create_palette()</code></h3>

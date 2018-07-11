@@ -14,6 +14,7 @@ images: []
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.retina = 2)
+library(tidyverse)
 ```
 
 [Jo-fai Chow](http://www.jofaichow.co.uk/)'s [rPlotter](https://github.com/woobe/rPlotter) is described as
@@ -66,7 +67,16 @@ quickpalette::url_palette(url = url, n_clusters = 8) %>%
   pals::pal.bands()
 ```
 
-Definitely getting a brighter vibe with this one.
+Definitely getting a brighter vibe with this one. That's a lot of whitespace. Let's see if we can tighten things up with Jeroen Ooms' [magick](https://cran.r-project.org/web/packages/magick/vignettes/intro.html) package.
+
+We'll need to read the image generated in the last chunk back in.
+
+```{r quickpal-magic, message = FALSE}
+library(magick)
+image_read("https://raw.githubusercontent.com/batpigandme/waxwings/rplotter/static/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/quickpal-1.png") %>%
+  image_trim()
+```
+
 
 ### `paletter::create_palette()`
 
@@ -79,7 +89,7 @@ library(paletter)
 
 You have to specify a `type_of_variable` argument, so I'll go with `"categorical"`.
 
-```{r paletter-pal, cache.lazy=TRUE}
+```{r paletter-pal, cache=TRUE}
 image_path <- here::here("static", "img", "ArcherPosters", "archer-poster.jpg")
 colours_vector <- create_palette(image_path = image_path,
                                  number_of_colors = 8, 
