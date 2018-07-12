@@ -91,7 +91,7 @@ You have to specify a `type_of_variable` argument, so I'll go with `"categorical
 
 ```{r paletter-pal, cache=TRUE}
 image_path <- here::here("static", "img", "ArcherPosters", "archer-poster.jpg")
-colours_vector <- create_palette(image_path = image_path,
+colours_vector <- create_palette(image_path,
                                  number_of_colors = 8, 
                                  type_of_variable = "categorical")
 ```
@@ -100,14 +100,78 @@ Though I like the layout of the output, paletter takes significantly longer than
 
 ### A palette for all seasons
 
-Based on the code chunk above, I'm beginning to suspect that there might be a lot of copying and pasting involved, which means it's probably time for (you guessed it) a function. To make life even easier on myself, I'm going to use local copies of the images, which I've conveniently suffixed with `_season*.jpg`.
+```{r qpal-season1}
+pal_s1 <- quickpalette::url_palette(url = "https://i.imgur.com/14V7d86.jpg", n_clusters = 8)
+pal_s1 %>%
+  pals::pal.bands(labels = "season 1", main = "Archer Promo Poster Palettes")
+```
+
+
+Based on the code chunk above, I'm beginning to suspect that there might be a lot of copying and pasting involved, which means it's probably time for (you guessed it) a function. To make life even easier on myself, I'm going to use copies of the images, which I've conveniently suffixed with `_season*.jpg`.
 
 I can use a combination of the [here](https://here.r-lib.org/) and [glue](https://glue.tidyverse.org/) packages to build paths to the images.
 
 ```{r glue-path}
-num <- 2
-here::here("static", "img", "ArcherPosters", glue::glue("ArcherPromoPoster_season{num}.jpg"))
+season_num <- 2
+here::here("static", "img", "ArcherPosters", glue::glue("ArcherPromoPoster_season{season_num}.jpg"))
 ```
+
+But, as is suggested by the name, it turns out that `quickpalette::url_palette()` wants a URL, and _not_ a local file. Due to an acute attack of laziness, I popped all of the posters in a GitHub repo.
+
+```{r glue-url}
+season_num <- 2
+poster_url <- glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png")
+poster_url
+```
+
+```{r make-season-pal}
+make_season_pal <- function(season_num, n_clusters = 8) {
+  s_num <- season_num
+  poster_url <- glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png")
+  pal_name <- glue::glue("pal_s{s_num}")
+  pal_name <- quickpalette::url_palette(url = poster_url, n_clusters = n_clusters)
+  c(pal_name)
+}
+```
+
+Cool, now I should just do this, right? `r emo::ji("smirk")`
+
+```{r pal-each}
+pal_s1 <- make_season_pal(1)
+pal_s2 <- make_season_pal(2)
+pal_s3 <- make_season_pal(3)
+pal_s4 <- make_season_pal(4)
+pal_s5 <- make_season_pal(5)
+pal_s6 <- make_season_pal(6)
+pal_s7 <- make_season_pal(7)
+pal_s8 <- make_season_pal(8)
+pal_s9 <- make_season_pal(9)
+```
+
+```{r pals-all}
+pals::pal.bands(pal_s1, pal_s2, pal_s3, pal_s4, pal_s5, pal_s6, pal_s7, pal_s8, pal_s9,
+                labels = c("season 1", "season 2", "season 3", "season 4", "season 5", "season 6", "season 7", "season 8", "season 9"),
+                main = "Archer Promo Poster Palettes")
+```
+
+Let's get organised here, and put this in a data frame:
+
+```{r archer-frame}
+archer_seasons <- data_frame(
+  season_num = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+  num_word = c(
+    "one", "two", "three", "four", "five", "six", "seven",
+    "eight", "nine"
+  )
+)
+```
+
+
+```{r poster-frame}
+archer_seasons %>%
+  mutate(poster_url = glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png"))
+```
+
 
 
 [^1]: Author's words, not mine—I would never disparrage the importance of colour-palette generators.

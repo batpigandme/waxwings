@@ -68,7 +68,7 @@ image_read(&quot;https://raw.githubusercontent.com/batpigandme/waxwings/rplotter
 library(paletter)</code></pre>
 <p>You have to specify a <code>type_of_variable</code> argument, so I’ll go with <code>&quot;categorical&quot;</code>.</p>
 <pre class="r"><code>image_path &lt;- here::here(&quot;static&quot;, &quot;img&quot;, &quot;ArcherPosters&quot;, &quot;archer-poster.jpg&quot;)
-colours_vector &lt;- create_palette(image_path = image_path,
+colours_vector &lt;- create_palette(image_path,
                                  number_of_colors = 8, 
                                  type_of_variable = &quot;categorical&quot;)
 #&gt; decomposing image into RGB...
@@ -82,11 +82,63 @@ colours_vector &lt;- create_palette(image_path = image_path,
 </div>
 <div id="a-palette-for-all-seasons" class="section level3">
 <h3>A palette for all seasons</h3>
-<p>Based on the code chunk above, I’m beginning to suspect that there might be a lot of copying and pasting involved, which means it’s probably time for (you guessed it) a function. To make life even easier on myself, I’m going to use local copies of the images, which I’ve conveniently suffixed with <code>_season*.jpg</code>.</p>
+<pre class="r"><code>pal_s1 &lt;- quickpalette::url_palette(url = &quot;https://i.imgur.com/14V7d86.jpg&quot;, n_clusters = 8)
+pal_s1 %&gt;%
+  pals::pal.bands(labels = &quot;season 1&quot;, main = &quot;Archer Promo Poster Palettes&quot;)</code></pre>
+<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/qpal-season1-1.png" width="672" /></p>
+<p>Based on the code chunk above, I’m beginning to suspect that there might be a lot of copying and pasting involved, which means it’s probably time for (you guessed it) a function. To make life even easier on myself, I’m going to use copies of the images, which I’ve conveniently suffixed with <code>_season*.jpg</code>.</p>
 <p>I can use a combination of the <a href="https://here.r-lib.org/">here</a> and <a href="https://glue.tidyverse.org/">glue</a> packages to build paths to the images.</p>
-<pre class="r"><code>num &lt;- 2
-here::here(&quot;static&quot;, &quot;img&quot;, &quot;ArcherPosters&quot;, glue::glue(&quot;ArcherPromoPoster_season{num}.jpg&quot;))
+<pre class="r"><code>season_num &lt;- 2
+here::here(&quot;static&quot;, &quot;img&quot;, &quot;ArcherPosters&quot;, glue::glue(&quot;ArcherPromoPoster_season{season_num}.jpg&quot;))
 #&gt; [1] &quot;/Users/maraaverick/waxwings/static/img/ArcherPosters/ArcherPromoPoster_season2.jpg&quot;</code></pre>
+<p>But, as is suggested by the name, it turns out that <code>quickpalette::url_palette()</code> wants a URL, and <em>not</em> a local file. Due to an acute attack of laziness, I popped all of the posters in a GitHub repo.</p>
+<pre class="r"><code>season_num &lt;- 2
+poster_url &lt;- glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png&quot;)
+poster_url
+#&gt; https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season2.png</code></pre>
+<pre class="r"><code>make_season_pal &lt;- function(season_num, n_clusters = 8) {
+  s_num &lt;- season_num
+  poster_url &lt;- glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png&quot;)
+  pal_name &lt;- glue::glue(&quot;pal_s{s_num}&quot;)
+  pal_name &lt;- quickpalette::url_palette(url = poster_url, n_clusters = n_clusters)
+  c(pal_name)
+}</code></pre>
+<p>Cool, now I should just do this, right? 😏</p>
+<pre class="r"><code>pal_s1 &lt;- make_season_pal(1)
+pal_s2 &lt;- make_season_pal(2)
+pal_s3 &lt;- make_season_pal(3)
+pal_s4 &lt;- make_season_pal(4)
+pal_s5 &lt;- make_season_pal(5)
+pal_s6 &lt;- make_season_pal(6)
+pal_s7 &lt;- make_season_pal(7)
+pal_s8 &lt;- make_season_pal(8)
+pal_s9 &lt;- make_season_pal(9)</code></pre>
+<pre class="r"><code>pals::pal.bands(pal_s1, pal_s2, pal_s3, pal_s4, pal_s5, pal_s6, pal_s7, pal_s8, pal_s9,
+                labels = c(&quot;season 1&quot;, &quot;season 2&quot;, &quot;season 3&quot;, &quot;season 4&quot;, &quot;season 5&quot;, &quot;season 6&quot;, &quot;season 7&quot;, &quot;season 8&quot;, &quot;season 9&quot;),
+                main = &quot;Archer Promo Poster Palettes&quot;)</code></pre>
+<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/pals-all-1.png" width="672" /></p>
+<p>Let’s get organised here, and put this in a data frame:</p>
+<pre class="r"><code>archer_seasons &lt;- data_frame(
+  season_num = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+  num_word = c(
+    &quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;, &quot;five&quot;, &quot;six&quot;, &quot;seven&quot;,
+    &quot;eight&quot;, &quot;nine&quot;
+  )
+)</code></pre>
+<pre class="r"><code>archer_seasons %&gt;%
+  mutate(poster_url = glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png&quot;))
+#&gt; # A tibble: 9 x 3
+#&gt;   season_num num_word poster_url                                          
+#&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;S3: glue&gt;                                          
+#&gt; 1          1 one      https://raw.githubusercontent.com/batpigandme/mstas…
+#&gt; 2          2 two      https://raw.githubusercontent.com/batpigandme/mstas…
+#&gt; 3          3 three    https://raw.githubusercontent.com/batpigandme/mstas…
+#&gt; 4          4 four     https://raw.githubusercontent.com/batpigandme/mstas…
+#&gt; 5          5 five     https://raw.githubusercontent.com/batpigandme/mstas…
+#&gt; 6          6 six      https://raw.githubusercontent.com/batpigandme/mstas…
+#&gt; 7          7 seven    https://raw.githubusercontent.com/batpigandme/mstas…
+#&gt; 8          8 eight    https://raw.githubusercontent.com/batpigandme/mstas…
+#&gt; 9          9 nine     https://raw.githubusercontent.com/batpigandme/mstas…</code></pre>
 </div>
 <div class="footnotes">
 <hr />
