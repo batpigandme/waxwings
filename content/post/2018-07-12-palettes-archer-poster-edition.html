@@ -1,6 +1,6 @@
 ---
 draft: yes
-title: '🎨 Palettes - Archer poster edition'
+title: '👨‍🎨 Palettes - Archer poster edition'
 author: Mara Averick
 draft: TRUE
 date: '2018-07-12'
@@ -96,12 +96,19 @@ here::here(&quot;static&quot;, &quot;img&quot;, &quot;ArcherPosters&quot;, glue:
 poster_url &lt;- glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png&quot;)
 poster_url
 #&gt; https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season2.png</code></pre>
-<pre class="r"><code>make_season_pal &lt;- function(season_num, n_clusters = 8) {
+<pre class="r"><code>make_season_pal &lt;- function(season_num) {
+  s_num &lt;- season_num
+  poster_url &lt;- glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png&quot;)
+  pal_cols &lt;- quickpalette::url_palette(url = poster_url, n_clusters = 8)
+  return(pal_cols)
+}</code></pre>
+<pre class="r"><code>make_season_pal_list &lt;- function(season_num) {
   s_num &lt;- season_num
   poster_url &lt;- glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png&quot;)
   pal_name &lt;- glue::glue(&quot;pal_s{s_num}&quot;)
-  pal_name &lt;- quickpalette::url_palette(url = poster_url, n_clusters = n_clusters)
-  c(pal_name)
+  pal_cols &lt;- quickpalette::url_palette(url = poster_url, n_clusters = 8)
+  pal_list &lt;- as.list(pal_cols)
+  return(pal_list)
 }</code></pre>
 <p>Cool, now I should just do this, right? 😏</p>
 <pre class="r"><code>pal_s1 &lt;- make_season_pal(1)
@@ -118,7 +125,7 @@ pal_s9 &lt;- make_season_pal(9)</code></pre>
                 main = &quot;Archer Promo Poster Palettes&quot;)</code></pre>
 <p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/pals-all-1.png" width="672" /></p>
 <p>Let’s get organised here, and put this in a data frame:</p>
-<pre class="r"><code>archer_seasons &lt;- data_frame(
+<pre class="r"><code>archer_seasons &lt;- tibble(
   season_num = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
   num_word = c(
     &quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;, &quot;five&quot;, &quot;six&quot;, &quot;seven&quot;,
@@ -126,19 +133,20 @@ pal_s9 &lt;- make_season_pal(9)</code></pre>
   )
 )</code></pre>
 <pre class="r"><code>archer_seasons %&gt;%
-  mutate(poster_url = glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png&quot;))
-#&gt; # A tibble: 9 x 3
-#&gt;   season_num num_word poster_url                                          
-#&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;S3: glue&gt;                                          
-#&gt; 1          1 one      https://raw.githubusercontent.com/batpigandme/mstas…
-#&gt; 2          2 two      https://raw.githubusercontent.com/batpigandme/mstas…
-#&gt; 3          3 three    https://raw.githubusercontent.com/batpigandme/mstas…
-#&gt; 4          4 four     https://raw.githubusercontent.com/batpigandme/mstas…
-#&gt; 5          5 five     https://raw.githubusercontent.com/batpigandme/mstas…
-#&gt; 6          6 six      https://raw.githubusercontent.com/batpigandme/mstas…
-#&gt; 7          7 seven    https://raw.githubusercontent.com/batpigandme/mstas…
-#&gt; 8          8 eight    https://raw.githubusercontent.com/batpigandme/mstas…
-#&gt; 9          9 nine     https://raw.githubusercontent.com/batpigandme/mstas…</code></pre>
+  mutate(poster_url = glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png&quot;)) %&gt;%
+  mutate(pal_name = glue::glue(&quot;pal_s{season_num}&quot;))
+#&gt; # A tibble: 9 x 4
+#&gt;   season_num num_word poster_url                                 pal_name 
+#&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;S3: glue&gt;                                 &lt;S3: glu&gt;
+#&gt; 1          1 one      https://raw.githubusercontent.com/batpiga… pal_s1   
+#&gt; 2          2 two      https://raw.githubusercontent.com/batpiga… pal_s2   
+#&gt; 3          3 three    https://raw.githubusercontent.com/batpiga… pal_s3   
+#&gt; 4          4 four     https://raw.githubusercontent.com/batpiga… pal_s4   
+#&gt; 5          5 five     https://raw.githubusercontent.com/batpiga… pal_s5   
+#&gt; 6          6 six      https://raw.githubusercontent.com/batpiga… pal_s6   
+#&gt; 7          7 seven    https://raw.githubusercontent.com/batpiga… pal_s7   
+#&gt; 8          8 eight    https://raw.githubusercontent.com/batpiga… pal_s8   
+#&gt; 9          9 nine     https://raw.githubusercontent.com/batpiga… pal_s9</code></pre>
 </div>
 <div class="footnotes">
 <hr />

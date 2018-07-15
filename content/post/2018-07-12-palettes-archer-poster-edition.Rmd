@@ -125,12 +125,23 @@ poster_url
 ```
 
 ```{r make-season-pal}
-make_season_pal <- function(season_num, n_clusters = 8) {
+make_season_pal <- function(season_num) {
+  s_num <- season_num
+  poster_url <- glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png")
+  pal_cols <- quickpalette::url_palette(url = poster_url, n_clusters = 8)
+  return(pal_cols)
+}
+```
+
+
+```{r make-season-pal-list}
+make_season_pal_list <- function(season_num) {
   s_num <- season_num
   poster_url <- glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png")
   pal_name <- glue::glue("pal_s{s_num}")
-  pal_name <- quickpalette::url_palette(url = poster_url, n_clusters = n_clusters)
-  c(pal_name)
+  pal_cols <- quickpalette::url_palette(url = poster_url, n_clusters = 8)
+  pal_list <- as.list(pal_cols)
+  return(pal_list)
 }
 ```
 
@@ -148,6 +159,7 @@ pal_s8 <- make_season_pal(8)
 pal_s9 <- make_season_pal(9)
 ```
 
+
 ```{r pals-all}
 pals::pal.bands(pal_s1, pal_s2, pal_s3, pal_s4, pal_s5, pal_s6, pal_s7, pal_s8, pal_s9,
                 labels = c("season 1", "season 2", "season 3", "season 4", "season 5", "season 6", "season 7", "season 8", "season 9"),
@@ -157,7 +169,7 @@ pals::pal.bands(pal_s1, pal_s2, pal_s3, pal_s4, pal_s5, pal_s6, pal_s7, pal_s8, 
 Let's get organised here, and put this in a data frame:
 
 ```{r archer-frame}
-archer_seasons <- data_frame(
+archer_seasons <- tibble(
   season_num = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
   num_word = c(
     "one", "two", "three", "four", "five", "six", "seven",
@@ -166,12 +178,11 @@ archer_seasons <- data_frame(
 )
 ```
 
-
 ```{r poster-frame}
 archer_seasons %>%
-  mutate(poster_url = glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png"))
+  mutate(poster_url = glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png")) %>%
+  mutate(pal_name = glue::glue("pal_s{season_num}"))
 ```
-
 
 
 [^1]: Author's words, not mine—I would never disparrage the importance of colour-palette generators.
