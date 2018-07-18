@@ -1,16 +1,14 @@
 ---
-draft: yes
-title: '👨‍🎨 Palettes - Archer poster edition'
+title: '🎨 Palettes - Archer poster edition'
 author: Mara Averick
-draft: TRUE
-date: '2018-07-12'
+date: '2018-07-18'
 slug: palettes-archer-poster-edition
 categories: []
 tags:
   - R
-banner: ''
+banner: 'banners/archer_colours.png'
 description: 'Extracting colour palettes from Archer promo posters. 👩‍🎨'
-images: []
+images: ['banners/archer_colours.png']
 ---
 
 
@@ -26,7 +24,8 @@ images: []
 <img src="https://i.imgur.com/NaAfhPY.gif" alt="I’m a verb now, Lana. Deal with it!" />
 <p class="caption">I’m a verb now, Lana. Deal with it!</p>
 </div>
-<pre class="r"><code># devtools::install_github(&quot;woobe/rPlotter&quot;)
+<pre class="r"><code>library(tidyverse)
+# devtools::install_github(&quot;woobe/rPlotter&quot;)
 library(rPlotter)</code></pre>
 <div id="rplotterextract_colours" class="section level3">
 <h3><code>rPlotter::extract_colours()</code></h3>
@@ -40,7 +39,7 @@ library(rPlotter)</code></pre>
 par(mfrow = c(1,2))
 pie(rep(1, 8), col = pal_a, main = &quot;Palette based on Archer Poster&quot;)
 hist(Nile, breaks = 8, col = pal_a, main = &quot;Palette based on Archer Poster&quot;)</code></pre>
-<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/season-1-1.png" width="672" /></p>
+<p><img src="/post/2018-07-18-palettes-archer-poster-edition_files/figure-html/season-1-1.png" width="672" /></p>
 <p>I’m not loving this palette. I mean, I understand why it’s happening—the suit, the background, the fire, but let’s take another palette generator for a spin.</p>
 </div>
 <div id="quickpaletteurl_palette" class="section level3">
@@ -53,13 +52,13 @@ library(pals)</code></pre>
 <pre class="r"><code>url &lt;- &quot;https://i.imgur.com/FyEALqr.jpg&quot;
 quickpalette::url_palette(url = url, n_clusters = 8) %&gt;%
   pals::pal.bands()</code></pre>
-<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/quickpal-1.png" width="672" /></p>
+<p><img src="/post/2018-07-18-palettes-archer-poster-edition_files/figure-html/quickpal-1.png" width="672" /></p>
 <p>Definitely getting a brighter vibe with this one. That’s a lot of whitespace. Let’s see if we can tighten things up with Jeroen Ooms’ <a href="https://cran.r-project.org/web/packages/magick/vignettes/intro.html">magick</a> package.</p>
 <p>We’ll need to read the image generated in the last chunk back in.</p>
 <pre class="r"><code>library(magick)
 image_read(&quot;https://raw.githubusercontent.com/batpigandme/waxwings/rplotter/static/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/quickpal-1.png&quot;) %&gt;%
   image_trim()</code></pre>
-<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/quickpal-magic-1.png" width="512" /></p>
+<p><img src="/post/2018-07-18-palettes-archer-poster-edition_files/figure-html/quickpal-magic-1.png" width="512" /></p>
 </div>
 <div id="palettercreate_palette" class="section level3">
 <h3><code>paletter::create_palette()</code></h3>
@@ -77,7 +76,7 @@ colours_vector &lt;- create_palette(image_path,
 #&gt; Joining, by = &quot;id&quot;
 #&gt; Joining, by = &quot;id&quot;
 #&gt; optimising level of divergence between colours</code></pre>
-<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/paletter-pal-1.png" width="672" /><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/paletter-pal-2.png" width="672" /></p>
+<p><img src="/post/2018-07-18-palettes-archer-poster-edition_files/figure-html/paletter-pal-1.png" width="672" /><img src="/post/2018-07-18-palettes-archer-poster-edition_files/figure-html/paletter-pal-2.png" width="672" /></p>
 <p>Though I like the layout of the output, paletter takes significantly longer than the other two packages. I also don’t know why it outputs the palette twice. So…🤷</p>
 </div>
 <div id="a-palette-for-all-seasons" class="section level3">
@@ -85,7 +84,7 @@ colours_vector &lt;- create_palette(image_path,
 <pre class="r"><code>pal_s1 &lt;- quickpalette::url_palette(url = &quot;https://i.imgur.com/14V7d86.jpg&quot;, n_clusters = 8)
 pal_s1 %&gt;%
   pals::pal.bands(labels = &quot;season 1&quot;, main = &quot;Archer Promo Poster Palettes&quot;)</code></pre>
-<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/qpal-season1-1.png" width="672" /></p>
+<p><img src="/post/2018-07-18-palettes-archer-poster-edition_files/figure-html/qpal-season1-1.png" width="672" /></p>
 <p>Based on the code chunk above, I’m beginning to suspect that there might be a lot of copying and pasting involved, which means it’s probably time for (you guessed it) a function. To make life even easier on myself, I’m going to use copies of the images, which I’ve conveniently suffixed with <code>_season*.jpg</code>.</p>
 <p>I can use a combination of the <a href="https://here.r-lib.org/">here</a> and <a href="https://glue.tidyverse.org/">glue</a> packages to build paths to the images.</p>
 <pre class="r"><code>season_num &lt;- 2
@@ -99,54 +98,19 @@ poster_url
 <pre class="r"><code>make_season_pal &lt;- function(season_num) {
   s_num &lt;- season_num
   poster_url &lt;- glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png&quot;)
-  pal_cols &lt;- quickpalette::url_palette(url = poster_url, n_clusters = 8)
-  return(pal_cols)
-}</code></pre>
-<pre class="r"><code>make_season_pal_list &lt;- function(season_num) {
-  s_num &lt;- season_num
-  poster_url &lt;- glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png&quot;)
   pal_name &lt;- glue::glue(&quot;pal_s{s_num}&quot;)
   pal_cols &lt;- quickpalette::url_palette(url = poster_url, n_clusters = 8)
-  pal_list &lt;- as.list(pal_cols)
-  return(pal_list)
 }</code></pre>
-<p>Cool, now I should just do this, right? 😏</p>
-<pre class="r"><code>pal_s1 &lt;- make_season_pal(1)
-pal_s2 &lt;- make_season_pal(2)
-pal_s3 &lt;- make_season_pal(3)
-pal_s4 &lt;- make_season_pal(4)
-pal_s5 &lt;- make_season_pal(5)
-pal_s6 &lt;- make_season_pal(6)
-pal_s7 &lt;- make_season_pal(7)
-pal_s8 &lt;- make_season_pal(8)
-pal_s9 &lt;- make_season_pal(9)</code></pre>
+<p>Let’s see those palettes…</p>
 <pre class="r"><code>pals::pal.bands(pal_s1, pal_s2, pal_s3, pal_s4, pal_s5, pal_s6, pal_s7, pal_s8, pal_s9,
                 labels = c(&quot;season 1&quot;, &quot;season 2&quot;, &quot;season 3&quot;, &quot;season 4&quot;, &quot;season 5&quot;, &quot;season 6&quot;, &quot;season 7&quot;, &quot;season 8&quot;, &quot;season 9&quot;),
                 main = &quot;Archer Promo Poster Palettes&quot;)</code></pre>
-<p><img src="/post/2018-07-12-palettes-archer-poster-edition_files/figure-html/pals-all-1.png" width="672" /></p>
-<p>Let’s get organised here, and put this in a data frame:</p>
-<pre class="r"><code>archer_seasons &lt;- tibble(
-  season_num = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-  num_word = c(
-    &quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;, &quot;five&quot;, &quot;six&quot;, &quot;seven&quot;,
-    &quot;eight&quot;, &quot;nine&quot;
-  )
-)</code></pre>
-<pre class="r"><code>archer_seasons %&gt;%
-  mutate(poster_url = glue::glue(&quot;https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png&quot;)) %&gt;%
-  mutate(pal_name = glue::glue(&quot;pal_s{season_num}&quot;))
-#&gt; # A tibble: 9 x 4
-#&gt;   season_num num_word poster_url                                 pal_name 
-#&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;S3: glue&gt;                                 &lt;S3: glu&gt;
-#&gt; 1          1 one      https://raw.githubusercontent.com/batpiga… pal_s1   
-#&gt; 2          2 two      https://raw.githubusercontent.com/batpiga… pal_s2   
-#&gt; 3          3 three    https://raw.githubusercontent.com/batpiga… pal_s3   
-#&gt; 4          4 four     https://raw.githubusercontent.com/batpiga… pal_s4   
-#&gt; 5          5 five     https://raw.githubusercontent.com/batpiga… pal_s5   
-#&gt; 6          6 six      https://raw.githubusercontent.com/batpiga… pal_s6   
-#&gt; 7          7 seven    https://raw.githubusercontent.com/batpiga… pal_s7   
-#&gt; 8          8 eight    https://raw.githubusercontent.com/batpiga… pal_s8   
-#&gt; 9          9 nine     https://raw.githubusercontent.com/batpiga… pal_s9</code></pre>
+<p><img src="/post/2018-07-18-palettes-archer-poster-edition_files/figure-html/pals-all-1.png" width="672" /></p>
+<p>Not bad! For comparison, here’s the set generated when I sent the same posters into the <a href="https://color.adobe.com/create/color-wheel/">Adobe Color Wheel</a> tool online (which, I assume, is more professional).</p>
+<div class="figure">
+<img src="https://i.imgur.com/qRD06kM.png?1" alt="Archer promo-poster palettes generated with Adobe Color Wheel" />
+<p class="caption">Archer promo-poster palettes generated with Adobe Color Wheel</p>
+</div>
 </div>
 <div class="footnotes">
 <hr />

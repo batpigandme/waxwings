@@ -1,15 +1,14 @@
 ---
-title: '`r emo::ji("palette")` Palettes - Archer poster edition'
+title: '`r emo::ji_glue(":artist_palette:")` Palettes - Archer poster edition'
 author: Mara Averick
-draft: TRUE
-date: '2018-07-12'
+date: '2018-07-18'
 slug: palettes-archer-poster-edition
 categories: []
 tags:
   - R
-banner: ''
+banner: 'banners/archer_colours.png'
 description: 'Extracting colour palettes from Archer promo posters. `r emo::ji("artist")`'
-images: []
+images: ['banners/archer_colours.png']
 ---
 
 ```{r setup, include = FALSE}
@@ -27,6 +26,7 @@ Being, well, me—my first thought was `r emo::ji("thinking")` _How could I invo
 ![I'm a verb now, Lana. Deal with it!](https://i.imgur.com/NaAfhPY.gif)
 
 ```{r load-lib, message = FALSE}
+library(tidyverse)
 # devtools::install_github("woobe/rPlotter")
 library(rPlotter)
 ```
@@ -128,13 +128,13 @@ poster_url
 make_season_pal <- function(season_num) {
   s_num <- season_num
   poster_url <- glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png")
+  pal_name <- glue::glue("pal_s{s_num}")
   pal_cols <- quickpalette::url_palette(url = poster_url, n_clusters = 8)
-  return(pal_cols)
 }
 ```
 
 
-```{r make-season-pal-list}
+```{r make-season-pal-list, include=FALSE}
 make_season_pal_list <- function(season_num) {
   s_num <- season_num
   poster_url <- glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{s_num}.png")
@@ -145,9 +145,7 @@ make_season_pal_list <- function(season_num) {
 }
 ```
 
-Cool, now I should just do this, right? `r emo::ji("smirk")`
-
-```{r pal-each}
+```{r pal-each, include=FALSE}
 pal_s1 <- make_season_pal(1)
 pal_s2 <- make_season_pal(2)
 pal_s3 <- make_season_pal(3)
@@ -159,6 +157,7 @@ pal_s8 <- make_season_pal(8)
 pal_s9 <- make_season_pal(9)
 ```
 
+Let's see those palettes...
 
 ```{r pals-all}
 pals::pal.bands(pal_s1, pal_s2, pal_s3, pal_s4, pal_s5, pal_s6, pal_s7, pal_s8, pal_s9,
@@ -166,9 +165,11 @@ pals::pal.bands(pal_s1, pal_s2, pal_s3, pal_s4, pal_s5, pal_s6, pal_s7, pal_s8, 
                 main = "Archer Promo Poster Palettes")
 ```
 
-Let's get organised here, and put this in a data frame:
+Not bad! For comparison, here's the set generated when I sent the same posters into the [Adobe Color Wheel](https://color.adobe.com/create/color-wheel/) tool online (which, I assume, is more professional).
 
-```{r archer-frame}
+![Archer promo-poster palettes generated with Adobe Color Wheel](https://i.imgur.com/qRD06kM.png?1)
+
+```{r archer-frame, include=FALSE}
 archer_seasons <- tibble(
   season_num = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
   num_word = c(
@@ -178,11 +179,10 @@ archer_seasons <- tibble(
 )
 ```
 
-```{r poster-frame}
+```{r poster-frame, include=FALSE}
 archer_seasons %>%
   mutate(poster_url = glue::glue("https://raw.githubusercontent.com/batpigandme/mstash/master/images/ArcherPosters/ArcherPromoPoster_season{season_num}.png")) %>%
   mutate(pal_name = glue::glue("pal_s{season_num}"))
 ```
-
 
 [^1]: Author's words, not mine—I would never disparrage the importance of colour-palette generators.
